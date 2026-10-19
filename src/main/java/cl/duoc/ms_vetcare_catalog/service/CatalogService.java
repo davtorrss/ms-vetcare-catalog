@@ -5,18 +5,24 @@ import cl.duoc.ms_vetcare_catalog.dto.ServiceResponse;
 import cl.duoc.ms_vetcare_catalog.dto.UpdateServiceRequest;
 import cl.duoc.ms_vetcare_catalog.entity.VeterinaryService;
 import cl.duoc.ms_vetcare_catalog.exception.ResourceNotFoundException;
+import cl.duoc.ms_vetcare_catalog.messaging.CatalogEventPublisher;
 import cl.duoc.ms_vetcare_catalog.repository.VeterinaryServiceRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class VeterinaryServiceService {
+public class CatalogService {
 
     private final VeterinaryServiceRepository repository;
+    private final CatalogEventPublisher eventPublisher;
 
-    public VeterinaryServiceService(VeterinaryServiceRepository repository) {
+    public CatalogService(
+            VeterinaryServiceRepository repository,
+            CatalogEventPublisher eventPublisher
+    ) {
         this.repository = repository;
+        this.eventPublisher = eventPublisher;
     }
 
     public List<ServiceResponse> findAll() {
@@ -36,7 +42,11 @@ public class VeterinaryServiceService {
 
         VeterinaryService saved = repository.save(service);
 
-        return ServiceResponse.fromEntity(saved);
+        ServiceResponse response = ServiceResponse.fromEntity(saved);
+
+        eventPublisher.publishCreated(response);
+
+        return response;
     }
 
     public ServiceResponse update(
@@ -56,6 +66,10 @@ public class VeterinaryServiceService {
 
         VeterinaryService updated = repository.save(service);
 
-        return ServiceResponse.fromEntity(updated);
+        ServiceResponse response = ServiceResponse.fromEntity(updated);
+
+        eventPublisher.publishUpdated(response);
+
+        return response;
     }
 }

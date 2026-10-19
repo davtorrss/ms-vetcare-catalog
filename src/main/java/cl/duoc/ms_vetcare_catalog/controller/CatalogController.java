@@ -3,7 +3,7 @@ package cl.duoc.ms_vetcare_catalog.controller;
 import cl.duoc.ms_vetcare_catalog.dto.CreateServiceRequest;
 import cl.duoc.ms_vetcare_catalog.dto.ServiceResponse;
 import cl.duoc.ms_vetcare_catalog.dto.UpdateServiceRequest;
-import cl.duoc.ms_vetcare_catalog.service.VeterinaryServiceService;
+import cl.duoc.ms_vetcare_catalog.service.CatalogService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +14,9 @@ import java.util.List;
 @RequestMapping("/api/catalog/services")
 public class CatalogController {
 
-    private final VeterinaryServiceService service;
+    private final CatalogService service;
 
-    public CatalogController(VeterinaryServiceService service) {
+    public CatalogController(CatalogService service) {
         this.service = service;
     }
 
