@@ -21,6 +21,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
+
 @Configuration
 public class SecurityConfig {
 
@@ -30,12 +31,16 @@ public class SecurityConfig {
     @Value("${vetcare.security.audience}")
     private String audience;
 
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
-            throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http
+    ) throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf ->
+                        csrf.disable()
+                )
 
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
@@ -53,10 +58,12 @@ public class SecurityConfig {
                                 "/actuator/info"
                         ).permitAll()
 
+
                         // =========================
                         // CATÁLOGO - LEER
                         // Scope: Catalogo.Leer
-                        // Rol: Admin u Operador
+                        // Roles:
+                        // Admin, Operador o Cliente
                         // =========================
                         .requestMatchers(
                                 HttpMethod.GET,
@@ -66,29 +73,55 @@ public class SecurityConfig {
                         .access((authentication, context) -> {
 
                             var authorities =
-                                    authentication.get().getAuthorities();
+                                    authentication
+                                            .get()
+                                            .getAuthorities();
 
                             boolean hasScope =
-                                    authorities.stream()
+                                    authorities
+                                            .stream()
                                             .anyMatch(authority ->
-                                                    authority.getAuthority()
-                                                            .equals("SCOPE_Catalogo.Leer")
+                                                    authority
+                                                            .getAuthority()
+                                                            .equals(
+                                                                    "SCOPE_Catalogo.Leer"
+                                                            )
                                             );
 
                             boolean hasAllowedRole =
-                                    authorities.stream()
+                                    authorities
+                                            .stream()
                                             .anyMatch(authority ->
-                                                    authority.getAuthority()
-                                                            .equals("ROLE_Admin")
+
+                                                    authority
+                                                            .getAuthority()
+                                                            .equals(
+                                                                    "ROLE_Admin"
+                                                            )
+
                                                     ||
-                                                    authority.getAuthority()
-                                                            .equals("ROLE_Operador")
+
+                                                    authority
+                                                            .getAuthority()
+                                                            .equals(
+                                                                    "ROLE_Operador"
+                                                            )
+
+                                                    ||
+
+                                                    authority
+                                                            .getAuthority()
+                                                            .equals(
+                                                                    "ROLE_Cliente"
+                                                            )
                                             );
 
                             return new AuthorizationDecision(
-                                    hasScope && hasAllowedRole
+                                    hasScope &&
+                                    hasAllowedRole
                             );
                         })
+
 
                         // =========================
                         // CATÁLOGO - CREAR
@@ -103,26 +136,38 @@ public class SecurityConfig {
                         .access((authentication, context) -> {
 
                             var authorities =
-                                    authentication.get().getAuthorities();
+                                    authentication
+                                            .get()
+                                            .getAuthorities();
 
                             boolean hasScope =
-                                    authorities.stream()
+                                    authorities
+                                            .stream()
                                             .anyMatch(authority ->
-                                                    authority.getAuthority()
-                                                            .equals("SCOPE_Catalogo.Escribir")
+                                                    authority
+                                                            .getAuthority()
+                                                            .equals(
+                                                                    "SCOPE_Catalogo.Escribir"
+                                                            )
                                             );
 
                             boolean isAdmin =
-                                    authorities.stream()
+                                    authorities
+                                            .stream()
                                             .anyMatch(authority ->
-                                                    authority.getAuthority()
-                                                            .equals("ROLE_Admin")
+                                                    authority
+                                                            .getAuthority()
+                                                            .equals(
+                                                                    "ROLE_Admin"
+                                                            )
                                             );
 
                             return new AuthorizationDecision(
-                                    hasScope && isAdmin
+                                    hasScope &&
+                                    isAdmin
                             );
                         })
+
 
                         // =========================
                         // CATÁLOGO - MODIFICAR
@@ -137,26 +182,38 @@ public class SecurityConfig {
                         .access((authentication, context) -> {
 
                             var authorities =
-                                    authentication.get().getAuthorities();
+                                    authentication
+                                            .get()
+                                            .getAuthorities();
 
                             boolean hasScope =
-                                    authorities.stream()
+                                    authorities
+                                            .stream()
                                             .anyMatch(authority ->
-                                                    authority.getAuthority()
-                                                            .equals("SCOPE_Catalogo.Escribir")
+                                                    authority
+                                                            .getAuthority()
+                                                            .equals(
+                                                                    "SCOPE_Catalogo.Escribir"
+                                                            )
                                             );
 
                             boolean isAdmin =
-                                    authorities.stream()
+                                    authorities
+                                            .stream()
                                             .anyMatch(authority ->
-                                                    authority.getAuthority()
-                                                            .equals("ROLE_Admin")
+                                                    authority
+                                                            .getAuthority()
+                                                            .equals(
+                                                                    "ROLE_Admin"
+                                                            )
                                             );
 
                             return new AuthorizationDecision(
-                                    hasScope && isAdmin
+                                    hasScope &&
+                                    isAdmin
                             );
                         })
+
 
                         // =========================
                         // CATÁLOGO - ELIMINAR
@@ -171,29 +228,42 @@ public class SecurityConfig {
                         .access((authentication, context) -> {
 
                             var authorities =
-                                    authentication.get().getAuthorities();
+                                    authentication
+                                            .get()
+                                            .getAuthorities();
 
                             boolean hasScope =
-                                    authorities.stream()
+                                    authorities
+                                            .stream()
                                             .anyMatch(authority ->
-                                                    authority.getAuthority()
-                                                            .equals("SCOPE_Catalogo.Escribir")
+                                                    authority
+                                                            .getAuthority()
+                                                            .equals(
+                                                                    "SCOPE_Catalogo.Escribir"
+                                                            )
                                             );
 
                             boolean isAdmin =
-                                    authorities.stream()
+                                    authorities
+                                            .stream()
                                             .anyMatch(authority ->
-                                                    authority.getAuthority()
-                                                            .equals("ROLE_Admin")
+                                                    authority
+                                                            .getAuthority()
+                                                            .equals(
+                                                                    "ROLE_Admin"
+                                                            )
                                             );
 
                             return new AuthorizationDecision(
-                                    hasScope && isAdmin
+                                    hasScope &&
+                                    isAdmin
                             );
                         })
 
+
                         // Todo lo demás exige autenticación
-                        .anyRequest().authenticated()
+                        .anyRequest()
+                        .authenticated()
                 )
 
                 .oauth2ResourceServer(oauth2 ->
@@ -207,62 +277,89 @@ public class SecurityConfig {
         return http.build();
     }
 
+
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
 
-        // =========================
-        // SCOPES
-        // =========================
         JwtGrantedAuthoritiesConverter scopesConverter =
                 new JwtGrantedAuthoritiesConverter();
 
-        scopesConverter.setAuthoritiesClaimName("scp");
-        scopesConverter.setAuthorityPrefix("SCOPE_");
+        scopesConverter.setAuthoritiesClaimName(
+                "scp"
+        );
 
-        // =========================
-        // ROLES
-        // =========================
+        scopesConverter.setAuthorityPrefix(
+                "SCOPE_"
+        );
+
+
         JwtGrantedAuthoritiesConverter rolesConverter =
                 new JwtGrantedAuthoritiesConverter();
 
-        rolesConverter.setAuthoritiesClaimName("roles");
-        rolesConverter.setAuthorityPrefix("ROLE_");
+        rolesConverter.setAuthoritiesClaimName(
+                "roles"
+        );
 
-        // Combina scopes + roles
+        rolesConverter.setAuthorityPrefix(
+                "ROLE_"
+        );
+
+
         DelegatingJwtGrantedAuthoritiesConverter authoritiesConverter =
                 new DelegatingJwtGrantedAuthoritiesConverter(
                         scopesConverter,
                         rolesConverter
                 );
 
+
         JwtAuthenticationConverter authenticationConverter =
                 new JwtAuthenticationConverter();
 
-        authenticationConverter.setJwtGrantedAuthoritiesConverter(
-                authoritiesConverter
-        );
+        authenticationConverter
+                .setJwtGrantedAuthoritiesConverter(
+                        authoritiesConverter
+                );
+
 
         return authenticationConverter;
     }
+
 
     @Bean
     public JwtDecoder jwtDecoder() {
 
         NimbusJwtDecoder jwtDecoder =
                 (NimbusJwtDecoder)
-                        JwtDecoders.fromIssuerLocation(issuer);
+                        JwtDecoders
+                                .fromIssuerLocation(
+                                        issuer
+                                );
+
 
         OAuth2TokenValidator<Jwt> issuerValidator =
-                JwtValidators.createDefaultWithIssuer(issuer);
+                JwtValidators
+                        .createDefaultWithIssuer(
+                                issuer
+                        );
+
 
         OAuth2TokenValidator<Jwt> audienceValidator =
                 token -> {
 
-                    if (token.getAudience() != null &&
-                            token.getAudience().contains(audience)) {
+                    if (
+                            token.getAudience() != null
+                            &&
+                            token
+                                    .getAudience()
+                                    .contains(
+                                            audience
+                                    )
+                    ) {
 
-                        return OAuth2TokenValidatorResult.success();
+                        return OAuth2TokenValidatorResult
+                                .success();
                     }
+
 
                     OAuth2Error error =
                             new OAuth2Error(
@@ -271,8 +368,13 @@ public class SecurityConfig {
                                     null
                             );
 
-                    return OAuth2TokenValidatorResult.failure(error);
+
+                    return OAuth2TokenValidatorResult
+                            .failure(
+                                    error
+                            );
                 };
+
 
         jwtDecoder.setJwtValidator(
                 new DelegatingOAuth2TokenValidator<>(
@@ -280,6 +382,7 @@ public class SecurityConfig {
                         audienceValidator
                 )
         );
+
 
         return jwtDecoder;
     }
